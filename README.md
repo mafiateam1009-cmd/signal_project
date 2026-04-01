@@ -68,5 +68,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Project Members
 
 - Student ID: I6424415
-## Project Members
 - Student ID: I6443029
