@@ -52,7 +52,12 @@ public class Patient {
      *         range
      */
     public List<PatientRecord> getRecords(long startTime, long endTime) {
-        // TODO Implement and test this method
+        /**
+         * Loops through all the patients saved in the system and filters those that
+         * have the timestamps within the given range. A record is considered valid if its
+         * timestamp is greater than or equal to the start time and less than or equal to the
+         * end time. This function returns a collection of filtered records.
+         */
         List<PatientRecord> filteredRecords = new ArrayList<>();
         for (PatientRecord record : this.patientRecords) {
             if (record.getTimestamp() >= startTime && record.getTimestamp() <= endTime) {
