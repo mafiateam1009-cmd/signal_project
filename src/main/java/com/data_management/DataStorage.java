@@ -12,6 +12,8 @@ import com.alerts.AlertGenerator;
  * This class serves as a repository for all patient records, organized by
  * patient IDs.
  */
+
+
 public class DataStorage {
     private Map<Integer, Patient> patientMap; // Stores patient objects indexed by their unique patient ID.
 
@@ -65,6 +67,8 @@ public class DataStorage {
         }
         return new ArrayList<>(); // return an empty list if no patient is found
     }
+
+
 
     /**
      * Retrieves a collection of all patients stored in the data storage.
