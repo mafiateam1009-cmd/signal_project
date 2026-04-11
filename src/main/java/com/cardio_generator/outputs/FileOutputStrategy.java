@@ -13,12 +13,24 @@ public class FileOutputStrategy implements OutputStrategy {
 
     public final ConcurrentHashMap<String, String> file_map = new ConcurrentHashMap<>();
 
-    public FileOutputStrategy(String baseDirectory) {
+    /**
+     * Constructor for FileOutputStrategy.
+     * @param baseDirectory The base directory where the output files will be stored. Each label will have its own file named <label>.txt in this directory.
+     */
+    public FileOutputStrategy(String baseDirectory) { // Class name was written in lowerCamelCase instead of Upper Camel Case recommended by section 5.2.2 of the google java style guide. Changed the classname to UpperCamelCase.
 
         this.BaseDirectory = baseDirectory;
     }
 
     @Override
+    /**
+     * Outputs the data to a file named <label>.txt in the base directory. If the file does not exist, it will be created. If it already exists, the new data will be appended to the file.
+     * @param patientId The ID of the patient.
+     * @param timestamp The timestamp of the data.
+     * @param label The label for the data.
+     * @param data The data to be output.
+     * @throws IOException If an I/O error occurs while creating the directory or writing to the file.
+     */
     public void output(int patientId, long timestamp, String label, String data) {
         try {
             // Create the directory
