@@ -5,16 +5,11 @@ import org.junit.jupiter.api.Test;
 
 import com.data_management.DataStorage;
 import com.data_management.PatientRecord;
+import com.data_management.DataReader;
 
-import java.io.IOException;
 import java.util.List;
 
 import static org.mockito.Mockito.*;
-
-public interface DataReader {
-    void readData(DataStorage storage) throws IOException;
-}
-
 
 class DataStorageTest {
 

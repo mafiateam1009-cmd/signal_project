@@ -25,6 +25,16 @@ public class DataStorage {
         this.patientMap = new HashMap<>();
     }
 
+    public DataStorage(DataReader reader) {
+        this.patientMap = new HashMap<>();
+
+        try {
+            reader.readData(this); // The reader will populate the storage with data.
+        } catch (Exception e) {
+            System.err.println("Error reading data: " + e.getMessage());
+        }
+    }
+
     /**
      * Adds or updates patient data in the storage.
      * If the patient does not exist, a new Patient object is created and added to
