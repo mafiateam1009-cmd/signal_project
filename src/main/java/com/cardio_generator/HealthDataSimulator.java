@@ -44,6 +44,11 @@ public class HealthDataSimulator {
         scheduleTasksForPatients(patientIds);
     }
 
+    /**
+     * Reads user entries from the command line and sets the appropriate configuration for the simulator based on the provided arguments. 
+     * This method handles options for displaying help, setting the number of patients, 
+     * and defining the output method (console, file, WebSocket, or TCP socket).
+     */
     private static void parseArguments(String[] args) throws IOException {
         for (int i = 0; i < args.length; i++) {
             switch (args[i]) {
@@ -51,6 +56,7 @@ public class HealthDataSimulator {
                     printHelp();
                     System.exit(0);
                     break;
+                // gets the patient count from 
                 case "--patient-count":
                     if (i + 1 < args.length) {
                         try {
@@ -122,6 +128,13 @@ public class HealthDataSimulator {
                 "  This command simulates data for 100 patients and sends the output to WebSocket clients connected to port 8080.");
     }
 
+    /**
+     * Initializes a list of patient IDs based on the specified patient count. 
+     * The ID's are generated sequentiently from 1 to the specified patientCount.
+     * 
+     * @param patientCount the number of patients to generate IDs for
+     * @return a list of patient IDs
+     */
     private static List<Integer> initializePatientIds(int patientCount) {
         List<Integer> patientIds = new ArrayList<>();
         for (int i = 1; i <= patientCount; i++) {
