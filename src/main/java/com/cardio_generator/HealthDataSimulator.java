@@ -28,7 +28,7 @@ import java.util.ArrayList;
 public class HealthDataSimulator {
 
     private static int patientCount = 50; // Default number of patients
-    private static ScheduledExecutorService scheduler;
+    private static ScheduledExecutorService scheduler; // Scheduler for managing the timing of data generation tasks
     private static OutputStrategy outputStrategy = new ConsoleOutputStrategy(); // Default output strategy
     private static final Random random = new Random();
 
@@ -143,6 +143,10 @@ public class HealthDataSimulator {
         return patientIds;
     }
 
+    /**
+     * Schedules time for data generation tasks(ECG, Blood Saturation, Blood Pressure, Blood Levels, Alerts) for each patient based on the specified patient IDs.
+     * @param patientIds a list of patient IDs for which we want to schedule data generation tasks. 
+     */
     private static void scheduleTasksForPatients(List<Integer> patientIds) {
         ECGDataGenerator ecgDataGenerator = new ECGDataGenerator(patientCount);
         BloodSaturationDataGenerator bloodSaturationDataGenerator = new BloodSaturationDataGenerator(patientCount);
@@ -159,6 +163,13 @@ public class HealthDataSimulator {
         }
     }
 
+    /**
+     * Schedules a task to run at a fixed rate using the scheduler. 
+     * The task is scheduled to start after a random initial delay (between 0 and 4 seconds)
+     * @param task the Runnable task to be scheduled
+     * @param period the period between successive executions of the task
+     * @param timeUnit the time unit for the period parameter
+     */
     private static void scheduleTask(Runnable task, long period, TimeUnit timeUnit) {
         scheduler.scheduleAtFixedRate(task, random.nextInt(5), period, timeUnit);
     }
