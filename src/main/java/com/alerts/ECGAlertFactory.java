@@ -1,4 +1,9 @@
 package com.alerts;
 
-public class ECGAlertFactory {
+public class ECGAlertFactory extends AlertFactory{
+
+    @Override
+    public Alert createAlert(String patientId, String condition, long timestamp) {
+        return new EKGAlert(patientId, condition, timestamp);
+    }
 }
