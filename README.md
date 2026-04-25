@@ -67,8 +67,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## UML Diagram description. 
 
-The UML class diagrams are located at 
-/uml_models
+The UML class diagrams are located at: see the [uml_models](uml_models) folder
+
 
 1. Alert Generator:
 At the center of the design is the AlertGenerator. It receives updated patient information and checks whether the patient’s latest record matches any of the alert rules stored in its recordTypeAlertRulePair collection. This collection maps each record type (such as blood pressure, ECG, or oxygen saturation) to the corresponding AlertRule implementation. When new data arrives, the AlertGenerator looks up the rule for that record type and evaluates it. If the rule detects a critical condition, the AlertGenerator creates an Alert object and triggers it.
@@ -84,7 +84,7 @@ The figure below illustrates the portion of CHMS that deals with the storage and
 The DataRetriever class is abstracted away from the storage layer to ensure that data retrieval is decoupled from the insertion process. It serves as the gateway through which clinicians and other modules have access to patient history. The association between DataStorage and DataRetriever is justified because the latter relies on the former's services but does not own or manage it. The AccessControl and RetentionPolicy classes implement permission verification and deletion policy enforcement respectively. They are connected to the DataStorage class since any access to stored data should involve verification and enforcement of permissions and retention policies.
 
 3. Patient Identification System. 
-At the center of the design is the PatientIdentifier class. It receives a PatientRecord that contains a patientId, vital type, value, and timestamp. It then checks this patientId against the data stored in DataStorage. In the given codebase, DataStorage keeps a HashMap<String, Patient>, where each Patient object holds basic identity information and a list of past PatientRecord entries.
+At the center of the design is the PatientIdentifier class. It receives a PatientRecord that contains a patientId, record type, value, and timestamp. It then checks this patientId against the data stored in DataStorage. In the given codebase, DataStorage keeps a HashMap<String, Patient>, where each Patient object holds basic identity information and a list of past PatientRecord entries.
 
 On top of this, there is a HospitalPatient class that inherits from Patient. HospitalPatient represents patients that are officially registered in the hospital context. By extending Patient, it can reuse the common fields (like patientId and patientRecords) and add more hospital‑specific details if needed (for example, ward, doctor, or risk category). This inheritance makes it clear in the model that every HospitalPatient is a Patient, but not every Patient must necessarily carry full hospital metadata. It also gives you flexibility to extend hospital‑specific behavior later without changing the base Patient class.
 
