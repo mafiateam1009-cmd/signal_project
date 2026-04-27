@@ -1,9 +1,9 @@
 package com.alerts.TrendAlertChecker;
 
-import com.data_management.Patient;
+import java.util.List;
 
 public interface TrendAlertChecker {
 
-    boolean checkTrend(Patient patient, String recordType, int windowSize, 
-                       double threshold, long startTime, long endTime);
+        public boolean checkTrend(List<Double> values, int windowSize, double threshold);
+
 }
