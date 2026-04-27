@@ -44,4 +44,18 @@ public class IncreasingTrendChecker implements TrendAlertChecker {
 
         return true; // Increasing trend detected
     }
+    
+    public static void main(String []args) {
+        // Example usage of the IncreasingTrendChecker
+        Patient patient = new Patient(1);
+        patient.addRecord(80, "heart_rate", System.currentTimeMillis() - 5000);
+        patient.addRecord(85, "heart_rate", System.currentTimeMillis() - 4000);
+        patient.addRecord(90, "heart_rate", System.currentTimeMillis() - 3000);
+        patient.addRecord(95, "heart_rate", System.currentTimeMillis() - 2000);
+        patient.addRecord(100, "heart_rate", System.currentTimeMillis() - 1000);
+
+        IncreasingTrendChecker trendChecker = new IncreasingTrendChecker();
+        boolean isIncreasing = trendChecker.checkTrend(patient, "heart_rate", 3, 5.0, System.currentTimeMillis() - 6000, System.currentTimeMillis());
+        System.out.println("Is there an increasing trend? " + isIncreasing);
+    }
 }
