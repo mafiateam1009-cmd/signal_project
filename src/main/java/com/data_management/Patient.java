@@ -24,10 +24,6 @@ public class Patient {
         this.patientRecords = new ArrayList<>();
     }
 
-    public int getPatientId(){
-        return patientId;
-    }
-
     /**
      * Adds a new record to this patient's list of medical records.
      * The record is created with the specified measurement value, record type, and
@@ -71,8 +67,26 @@ public class Patient {
         return filteredRecords;
     }
 
-    //added this here to make my life easier in AlertGenerator
-    public List<PatientRecord> getRecords(){
-        return patientRecords;
+    /**
+     * Retrieves a list of PatientRecord objects for this patient that match a
+     * specified record type and fall within a specified time range.
+     * The method filters records based on the record type, start time, and end
+     * time provided.
+     *
+     * @param recordType the type of record to filter by, e.g., "HeartRate",
+     *                   "BloodPressure"
+     * @param startTime  the start of the time range in milliseconds 
+     * @param endTime    the end of the time range in milliseconds 
+     * @return a list of PatientRecord objects that match the specified record type
+     *         and fall within the specified time range
+     */
+    public List<PatientRecord> getRecordsByType(String recordType, long startTime, long endTime) {
+        List<PatientRecord> filteredRecords = new ArrayList<>();
+        for (PatientRecord record : this.patientRecords) {
+            if (record.getRecordType().equalsIgnoreCase(recordType) && record.getTimestamp() >= startTime && record.getTimestamp() <= endTime) {
+                filteredRecords.add(record);
+            }
+        }
+        return filteredRecords;
     }
 }
