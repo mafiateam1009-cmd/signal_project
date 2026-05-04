@@ -38,6 +38,8 @@ public class AlertGenerator {
         // Implementation goes here
     }
 
+
+    
     /**
      * Triggers an alert for the monitoring system. This method can be extended to
      * notify medical staff, log the alert, or perform other actions. The method
