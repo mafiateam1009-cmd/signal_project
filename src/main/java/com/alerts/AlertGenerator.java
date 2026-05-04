@@ -2,6 +2,7 @@ package com.alerts;
 
 import com.data_management.DataStorage;
 import com.data_management.Patient;
+import com.data_management.PatientRecord;
 
 /**
  * The {@code AlertGenerator} class is responsible for monitoring patient data
@@ -35,7 +36,115 @@ public class AlertGenerator {
      * @param patient the patient data to evaluate for alert conditions
      */
     public void evaluateData(Patient patient) {
-        // Implementation goes here
+        checkLowSaturation(patient);
+        checkRapidDrop(patient);
+        checkECG(patient);
+        checkTriggeredAlert(patient);
+    }
+    private void checkLowSaturation(Patient patient) {
+
+        for (PatientRecord record : patient.getRecords()) {
+
+            if (!"BloodSaturation".equals(record.getRecordType())) continue;
+
+            double sat = record.getMeasurementValue();
+
+            // clinic guideline: alert below 92 unless already flagged upstream
+            if (sat < 92.0) {
+
+                triggerAlert(new Alert(
+                        String.valueOf(patient.getPatientId()),
+                        "Low Blood Saturation",
+                        record.getTimestamp()
+                ));
+            }
+        }
+
+    }
+
+    private void checkRapidDrop(Patient patient) {
+
+        var records = patient.getRecords();
+
+// NOTE: assumes sorted by ingestion time (not strictly validated here)
+        for (int i = 1; i < records.size(); i++) {
+
+            var prev = records.get(i - 1);
+            var curr = records.get(i);
+
+            if (!"BloodSaturation".equals(prev.getRecordType())) continue;
+            if (!"BloodSaturation".equals(curr.getRecordType())) continue;
+
+            double delta = prev.getMeasurementValue() - curr.getMeasurementValue();
+            long window = curr.getTimestamp() - prev.getTimestamp();
+
+            // 5% drop within 10min window (threshold agreed with cardio team)
+            if (delta >= 5.0 && window <= 600_000) {
+
+                triggerAlert(new Alert(
+                        String.valueOf(patient.getPatientId()),
+                        "Rapid Saturation Drop",
+                        curr.getTimestamp()
+                ));
+            }
+        }
+
+    }
+
+    private void checkECG(Patient patient) {
+
+        var records = patient.getRecords();
+
+        double sum = 0;
+        int n = 0;
+
+        for (var r : records) {
+            if ("ECG".equals(r.getRecordType())) {
+                sum += r.getMeasurementValue();
+                n++;
+            }
+        }
+
+        if (n == 0) return;
+
+        double avg = sum / n;
+
+//spike detection against current patient baseline (very naive baseline)
+        for (var r : records) {
+
+            if (!"ECG".equals(r.getRecordType())) continue;
+
+            double v = r.getMeasurementValue();
+
+            if (v > avg + 50.0) {
+
+                triggerAlert(new Alert(
+                        String.valueOf(patient.getPatientId()),
+                        "Abnormal ECG Peak",
+                        r.getTimestamp()
+                ));
+            }
+        }
+
+    }
+
+    private void checkTriggeredAlert(Patient patient) {
+
+        for (var r : patient.getRecords()) {
+
+            if (!"Alert".equals(r.getRecordType())) continue;
+
+            // legacy encoding: 1.0 = manual trigger event
+            if (r.getMeasurementValue() == 1.0) {
+
+                triggerAlert(new Alert(
+                        String.valueOf(patient.getPatientId()),
+                        "Manual Alert Triggered",
+                        r.getTimestamp()
+                ));
+            }
+        }
+
     }
 
     /**
@@ -47,6 +156,7 @@ public class AlertGenerator {
      * @param alert the alert object containing details about the alert condition
      */
     private void triggerAlert(Alert alert) {
-        // Implementation might involve logging the alert or notifying staff
+        System.out.println("ALERT: " + alert);
+
     }
 }

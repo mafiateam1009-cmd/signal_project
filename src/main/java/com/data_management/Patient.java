@@ -24,6 +24,10 @@ public class Patient {
         this.patientRecords = new ArrayList<>();
     }
 
+    public int getPatientId(){
+        return patientId;
+    }
+
     /**
      * Adds a new record to this patient's list of medical records.
      * The record is created with the specified measurement value, record type, and
@@ -65,5 +69,10 @@ public class Patient {
             }
         }
         return filteredRecords;
+    }
+
+    //added this here to make my life easier in AlertGenerator
+    public List<PatientRecord> getRecords(){
+        return patientRecords;
     }
 }

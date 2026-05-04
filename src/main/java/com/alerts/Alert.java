@@ -13,6 +13,7 @@ public class Alert {
     }
 
     public String getPatientId() {
+
         return patientId;
     }
 

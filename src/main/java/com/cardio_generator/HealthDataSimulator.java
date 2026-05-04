@@ -26,7 +26,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 
 public class HealthDataSimulator {
-
+    private static HealthDataSimulator instance;
     private static int patientCount = 50; // Default number of patients
     private static ScheduledExecutorService scheduler; // Scheduler for managing the timing of data generation tasks
     private static OutputStrategy outputStrategy = new ConsoleOutputStrategy(); // Default output strategy
@@ -43,6 +43,16 @@ public class HealthDataSimulator {
 
         scheduleTasksForPatients(patientIds);
     }
+
+    private HealthDataSimulator() {}
+
+    public static HealthDataSimulator getInstance(){
+        if(instance == null){
+            instance = new HealthDataSimulator();
+        }
+        return instance;
+    }
+
 
     /**
      * Reads user entries from the command line and sets the appropriate configuration for the simulator based on the provided arguments. 

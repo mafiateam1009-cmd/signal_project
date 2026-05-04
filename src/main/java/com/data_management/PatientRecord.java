@@ -43,7 +43,7 @@ public class PatientRecord {
 
     /**
      * Returns the measurement value of this record.
-     * 
+     *
      * @return the measurement value
      */
     public double getMeasurementValue() {
