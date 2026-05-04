@@ -71,6 +71,21 @@ public class Patient {
         return filteredRecords;
     }
 
+    public List<PatientRecord> getRecordsbyType(String recordType) {
+        /**
+         * Loops through all the patients saved in the system and filters those that
+         * have the record type matching the given type. A record is considered valid if its
+         * type is equal to the given type. This function returns a collection of filtered records.
+         */
+        List<PatientRecord> filteredRecords = new ArrayList<>();
+        for (PatientRecord record : this.patientRecords) {
+            if (record.getRecordType().equals(recordType)) {
+                filteredRecords.add(record);
+            }
+        }
+        return filteredRecords;
+    }
+
     //added this here to make my life easier in AlertGenerator
     public List<PatientRecord> getRecords(){
         return patientRecords;
