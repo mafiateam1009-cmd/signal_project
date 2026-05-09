@@ -96,20 +96,20 @@ public class AlertGenerator {
     /**
      * Checks for an increasing trend in blood pressure values for the given patient. If an increasing trend is detected based on the specified change threshold and window size, an alert is triggered.
      * @param patient the patient whose blood pressure data is being evaluated
-     * @param changeThreshold the threshold for determining an increasing trend in blood pressure values
+     * @param changeThreshold the minimum average change in blood pressure values over the specified window size that would indicate an increasing trend and trigger an alert
      * @param windowSize the number of consecutive records to consider when evaluating the trend
      */
-    private void checkBloodPressureIncreasingTrend(Patient patient, double changeThreshold, int windowSize) {
+    void checkBloodPressureIncreasingTrend(Patient patient, double changeThreshold, int windowSize) {
         List<PatientRecord> records = patient.getRecordsbyType("BloodPressure");
 
         for(int i = 0; i < records.size() - windowSize; i++) {
             boolean increasingTrend = false;
-            double measurementSum = 0;
-            for(int j = 0; j < windowSize; j++) {
-                measurementSum += records.get(i + j).getMeasurementValue();
+            double changeSum = 0;
+            for(int j = 0; j < windowSize-1; j++) {
+                changeSum += Math.abs(records.get(i + j).getMeasurementValue() - records.get(i + j + 1).getMeasurementValue());
             }
-            double meanMeasurement = measurementSum / windowSize;
-            increasingTrend = meanMeasurement > changeThreshold; // Example condition for increasing trend, can be adjusted based on requirements
+            double meanChange = changeSum / (windowSize - 1);
+            increasingTrend = meanChange > changeThreshold; // Example condition for increasing trend, can be adjusted based on requirements
             if(increasingTrend) {
                 triggerAlert(new Alert(
                         String.valueOf(patient.getPatientId()),
