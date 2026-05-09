@@ -183,7 +183,7 @@ public class AlertGenerator {
      * The alert is triggered when systolic blood pressure is below 90mmHg and blood oxygen saturation is below 92%
      * @param patient the patient whose blood pressure and blood oxygen saturation data is being evaluated for hypotensive hypoxemia condition
      */
-    public void checkHypotensiveHypoxemiaCheck(Patient patient) {
+    public void hypotensiveHypoxemiaCheck(Patient patient) {
         List<PatientRecord> bpRecords = patient.getRecordsbyType("BloodPressure");
         List<PatientRecord> satRecords = patient.getRecordsbyType("BloodSaturation");
 
@@ -192,7 +192,7 @@ public class AlertGenerator {
             if (bpValue < 90.0) { // Systolic hypotension threshold
                 for (PatientRecord satRecord : satRecords) {
                     double satValue = satRecord.getMeasurementValue();
-                    if (satValue < 92.0) { // Hypoxemia threshold
+                    if (satValue < 92.0 && bpRecord.getTimestamp() >= satRecord.getTimestamp()) { // Hypoxemia threshold
                         triggerAlert(new Alert(
                                 String.valueOf(patient.getPatientId()),
                                 "Hypotensive Hypoxemia Detected",
