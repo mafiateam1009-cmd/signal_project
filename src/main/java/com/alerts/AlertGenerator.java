@@ -111,7 +111,7 @@ public class AlertGenerator {
                 changeSum +=  records.get(i + j + 1).getMeasurementValue() - records.get(i + j).getMeasurementValue(); // positive change indicates increase
             }
             double meanChange = changeSum / (windowSize - 1);
-            increasingTrend = meanChange > changeThreshold; // Example condition for increasing trend, can be adjusted based on requirements
+            increasingTrend = meanChange > changeThreshold; 
             if(increasingTrend) {
                 triggerAlert(new Alert(
                         String.valueOf(patient.getPatientId()),
@@ -139,7 +139,7 @@ public class AlertGenerator {
                 changeSum += records.get(i + j + 1).getMeasurementValue() - records.get(i + j).getMeasurementValue(); // positive change indicates increase
             }
             double meanChange = changeSum / (windowSize - 1);
-            decreasingTrend = meanChange < -changeThreshold; // Example condition for decreasing trend, can be adjusted based on requirements
+            decreasingTrend = meanChange < -changeThreshold; 
             if(decreasingTrend) {
                 triggerAlert(new Alert(
                         String.valueOf(patient.getPatientId()),
@@ -152,8 +152,9 @@ public class AlertGenerator {
     }
 
     /**
-     * This methods triggers an alert if the systolic blood pressure exceeds 180mmHgor drops below 90mmHg,
+     * This methods triggers an alert if the systolic blood pressure exceeds 180mmHg or drops below 90mmHg,
      * or if the diastolic blood pressure exceeds 120mmHg or drops below 60mmHg. 
+     * @param patient the patient whose blood pressure data is being evaluated for critical thresholds
      */
     public void criticalBloodPressureThresholdCheck(Patient patient) {
         List<PatientRecord> records = patient.getRecordsbyType("BloodPressure");
@@ -177,7 +178,32 @@ public class AlertGenerator {
 
     }
 
-    private void checkECG(Patient patient) {
+    /**
+     * This alert will trigger based on combinded blood pressure and low blood oxygen saturation levels.
+     * The alert is triggered when systolic blood pressure is below 90mmHg and blood oxygen saturation is below 92%
+     * @param patient the patient whose blood pressure and blood oxygen saturation data is being evaluated for hypotensive hypoxemia condition
+     */
+    public void checkHypotensiveHypoxemiaCheck(Patient patient) {
+        List<PatientRecord> bpRecords = patient.getRecordsbyType("BloodPressure");
+        List<PatientRecord> satRecords = patient.getRecordsbyType("BloodSaturation");
+
+        for (PatientRecord bpRecord : bpRecords) {
+            double bpValue = bpRecord.getMeasurementValue();
+            if (bpValue < 90.0) { // Systolic hypotension threshold
+                for (PatientRecord satRecord : satRecords) {
+                    double satValue = satRecord.getMeasurementValue();
+                    if (satValue < 92.0) { // Hypoxemia threshold
+                        triggerAlert(new Alert(
+                                String.valueOf(patient.getPatientId()),
+                                "Hypotensive Hypoxemia Detected",
+                                Math.max(bpRecord.getTimestamp(), satRecord.getTimestamp()) // Use the latest timestamp of the two records
+                        ));
+                    }
+                }
+            }
+        }
+    }
+    public void checkECG(Patient patient) {
 
         var records = patient.getRecords();
 
