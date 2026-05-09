@@ -134,5 +134,21 @@ class AlertGeneratorTest {
         assertTrue(output.toLowerCase().contains("diastolic".toLowerCase()), "Alert should indicate diastolic blood pressure issue");
     }
 
+    @Test
+    void testHypotensiveHypoxemiaAlertCheck() {
+        // Arrange: Add blood pressure and oxygen saturation records with values that should trigger alert
+        testPatient.addRecord(85.0, "BloodPressure", 1000L); // BP below 90
+        testPatient.addRecord(55.0, "BloodPressure", 2000L); // BP below 90
+        testPatient.addRecord(88.0, "BloodSaturation", 2000L); // Oxygen saturation below 90%
+
+        // Act: Call the method to check for hypotension and hypoxemia
+        String output = captureSystemOutput(() -> {
+            alertGenerator.hypotensiveHypoxemiaCheck(testPatient);
+        });
+
+        // Assert: Verify that an alert was triggered for hypotension and hypoxemia
+        assertTrue(output.toLowerCase().contains("alert"), "Alert should be triggered for hypotension and hypoxemia");
+        assertTrue(output.toLowerCase().contains("Hypotensive Hypoxemia Detected".toLowerCase()), "Alert should indicate hypotensive hypoxemia issue");
+    }
     
 }
