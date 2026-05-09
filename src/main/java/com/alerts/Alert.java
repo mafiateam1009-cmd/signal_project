@@ -27,10 +27,10 @@ public class Alert {
 
     @Override
     public String toString() {
-        return "Alert{" +
+        return "Alert !!!" +
                 "patientId='" + patientId + '\'' +
                 ", condition='" + condition + '\'' +
                 ", timestamp=" + timestamp +
-                '}';
+                "\n";
     }
 }
