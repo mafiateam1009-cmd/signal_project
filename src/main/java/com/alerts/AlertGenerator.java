@@ -102,7 +102,7 @@ public class AlertGenerator {
     public void checkBloodPressureIncreasingTrend(Patient patient, double changeThreshold, int windowSize) {
         List<PatientRecord> records = patient.getRecordsbyType("BloodPressure");
 
-        for(int i = 0; i < records.size() - windowSize; i++) {
+        for(int i = 0; i <= records.size() - windowSize; i++) {
             boolean increasingTrend = false;
             double changeSum = 0;
             for(int j = 0; j < windowSize-1; j++) {
@@ -120,6 +120,8 @@ public class AlertGenerator {
         }
 
     }
+
+    
     private void checkECG(Patient patient) {
 
         var records = patient.getRecords();
@@ -187,7 +189,7 @@ public class AlertGenerator {
      * @param alert the alert object containing details about the alert condition
      */
     private void triggerAlert(Alert alert) {
-        System.out.println("ALERT: " + alert);
+        System.out.println( alert);
 
     }
 }
