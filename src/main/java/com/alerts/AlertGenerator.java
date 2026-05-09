@@ -92,10 +92,14 @@ public class AlertGenerator {
         }
 
     }
-    private void checkBloodPressureIncreasingTrend(Patient patient, double changeThreshold, int windowSize) {
-        // Implementation for checking increasing trend in blood pressure values
-        // This method can be called from evaluateData to check for trends in blood pressure
 
+    /**
+     * Checks for an increasing trend in blood pressure values for the given patient. If an increasing trend is detected based on the specified change threshold and window size, an alert is triggered.
+     * @param patient the patient whose blood pressure data is being evaluated
+     * @param changeThreshold the threshold for determining an increasing trend in blood pressure values
+     * @param windowSize the number of consecutive records to consider when evaluating the trend
+     */
+    private void checkBloodPressureIncreasingTrend(Patient patient, double changeThreshold, int windowSize) {
         List<PatientRecord> records = patient.getRecordsbyType("BloodPressure");
 
         for(int i = 0; i < records.size() - windowSize; i++) {

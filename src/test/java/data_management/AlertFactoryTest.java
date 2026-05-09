@@ -27,6 +27,7 @@ public class AlertFactoryTest {
         Alert alert = factory.createAlert("patient_1", "AbnormalECG", 123456789L);
         assertNotNull(alert);
     }
+    
     }
 
 
