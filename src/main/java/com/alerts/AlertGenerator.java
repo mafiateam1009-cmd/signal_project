@@ -151,6 +151,32 @@ public class AlertGenerator {
 
     }
 
+    /**
+     * This methods triggers an alert if the systolic blood pressure exceeds 180mmHgor drops below 90mmHg,
+     * or if the diastolic blood pressure exceeds 120mmHg or drops below 60mmHg. 
+     */
+    public void criticalBloodPressureThresholdCheck(Patient patient) {
+        List<PatientRecord> records = patient.getRecordsbyType("BloodPressure");
+
+        for (PatientRecord record : records) {
+            double bpValue = record.getMeasurementValue();
+            if (bpValue > 180.0 || bpValue < 90.0) { // Systolic threshold
+                triggerAlert(new Alert(
+                        String.valueOf(patient.getPatientId()),
+                        "Critical Systolic Blood Pressure",
+                        record.getTimestamp()
+                ));
+            } else if (bpValue > 120.0 || bpValue < 60.0) { // Diastolic threshold
+                triggerAlert(new Alert(
+                        String.valueOf(patient.getPatientId()),
+                        "Critical Diastolic Blood Pressure",
+                        record.getTimestamp()
+                ));
+            }
+        }
+
+    }
+
     private void checkECG(Patient patient) {
 
         var records = patient.getRecords();
