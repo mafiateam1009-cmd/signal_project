@@ -42,6 +42,8 @@ public class AlertGenerator {
         checkRapidDrop(patient);
         checkECG(patient);
         checkTriggeredAlert(patient);
+        checkBloodPressureIncreasingTrend(patient, 10.0, 3); 
+        checkBloodPressureDecreasingTrend(patient, 10.0, 3); 
     }
     private void checkLowSaturation(Patient patient) {
 
@@ -106,7 +108,7 @@ public class AlertGenerator {
             boolean increasingTrend = false;
             double changeSum = 0;
             for(int j = 0; j < windowSize-1; j++) {
-                changeSum += Math.abs(records.get(i + j).getMeasurementValue() - records.get(i + j + 1).getMeasurementValue());
+                changeSum +=  records.get(i + j + 1).getMeasurementValue() - records.get(i + j).getMeasurementValue(); // positive change indicates increase
             }
             double meanChange = changeSum / (windowSize - 1);
             increasingTrend = meanChange > changeThreshold; // Example condition for increasing trend, can be adjusted based on requirements
@@ -121,7 +123,34 @@ public class AlertGenerator {
 
     }
 
-    
+    /**
+     * Checks for a decreasing trend in blood pressure values for the given patient. If a decreasing trend is detected based on the specified change threshold and window size, an alert is triggered.
+     * @param patient the patient whose blood pressure data is being evaluated
+     * @param changeThreshold the minimum average change in blood pressure values over the specified window size that would indicate a decreasing trend and trigger an alert
+     * @param windowSize the number of consecutive records to consider when evaluating the trend
+     */
+    public void checkBloodPressureDecreasingTrend(Patient patient, double changeThreshold, int windowSize) {
+        List<PatientRecord> records = patient.getRecordsbyType("BloodPressure");
+
+        for(int i = 0; i <= records.size() - windowSize; i++) {
+            boolean decreasingTrend = false;
+            double changeSum = 0;
+            for(int j = 0; j < windowSize-1; j++) {
+                changeSum += records.get(i + j + 1).getMeasurementValue() - records.get(i + j).getMeasurementValue(); // positive change indicates increase
+            }
+            double meanChange = changeSum / (windowSize - 1);
+            decreasingTrend = meanChange < -changeThreshold; // Example condition for decreasing trend, can be adjusted based on requirements
+            if(decreasingTrend) {
+                triggerAlert(new Alert(
+                        String.valueOf(patient.getPatientId()),
+                        "Decreasing Blood Pressure Trend",
+                        records.get(i + windowSize - 1).getTimestamp()
+                ));
+            }
+        }
+
+    }
+
     private void checkECG(Patient patient) {
 
         var records = patient.getRecords();
