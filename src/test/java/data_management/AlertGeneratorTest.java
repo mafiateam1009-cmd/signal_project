@@ -115,5 +115,24 @@ class AlertGeneratorTest {
         assertTrue(output.toLowerCase().contains("Decreasing Blood Pressure Trend".toLowerCase()), "Alert condition should indicate decreasing blood pressure trend");
     }
 
+    @Test
+    void testCheckBloodPressureAboveThreshold() {
+        // Arrange: Add blood pressure records with values that should trigger alert
+        testPatient.addRecord(190.0, "BloodPressure", 1000L); // Systolic above 180
+        testPatient.addRecord(85.0, "BloodPressure", 2000L); // Systolic below 90
+        testPatient.addRecord(125.0, "BloodPressure", 3000L); // Diastolic above 120
+        testPatient.addRecord(55.0, "BloodPressure", 4000L); // Diastolic below 60
+
+        // Act: Call the method to check critical blood pressure thresholds
+        String output = captureSystemOutput(() -> 
+            alertGenerator.criticalBloodPressureThresholdCheck(testPatient)
+        );
+
+        // Assert: Verify that alerts were triggered for all critical values
+        assertTrue(output.toLowerCase().contains("alert"), "Alert should be triggered for critical blood pressure values");
+        assertTrue(output.toLowerCase().contains("systolic".toLowerCase()), "Alert should indicate systolic blood pressure issue");
+        assertTrue(output.toLowerCase().contains("diastolic".toLowerCase()), "Alert should indicate diastolic blood pressure issue");
+    }
+
     
 }
