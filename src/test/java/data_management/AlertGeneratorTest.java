@@ -95,8 +95,25 @@ class AlertGeneratorTest {
         assertFalse(output.toLowerCase().contains("alert"), "No alert should be triggered when there are fewer records than the window size");
     }
 
+    @Test
+    void testCheckBloodPressureDecreasingTrendDetectsDecrease() {
+        // Arrange: Add blood pressure records with values that should trigger alert
+        testPatient.addRecord(140.0, "BloodPressure", 1000L);
+        testPatient.addRecord(135.0, "BloodPressure", 2000L);
+        testPatient.addRecord(130.0, "BloodPressure", 3000L);
+        testPatient.addRecord(115.0, "BloodPressure", 4000L);
 
-   
+        // Act: Call the method with a threshold of 9.5 and window size of 3
+        // Window 1: [140, 135, 130] has mean change of -5.0 (no alert)
+        // Window 2: [135, 130, 115] has mean change of -10.0 (< -9.5 - should trigger alert)
+        String output = captureSystemOutput(() -> 
+            alertGenerator.checkBloodPressureDecreasingTrend(testPatient, 9.5, 3)
+        );
+
+        // Assert: Verify that an alert was triggered
+        assertTrue(output.toLowerCase().contains("alert"), "Alert should be triggered for decreasing trend in blood pressure");
+        assertTrue(output.toLowerCase().contains("Decreasing Blood Pressure Trend".toLowerCase()), "Alert condition should indicate decreasing blood pressure trend");
+    }
 
     
 }
