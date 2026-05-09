@@ -1,5 +1,7 @@
 package com.alerts;
 
+import java.util.List;
+
 import com.data_management.DataStorage;
 import com.data_management.Patient;
 import com.data_management.PatientRecord;
@@ -90,7 +92,30 @@ public class AlertGenerator {
         }
 
     }
+    private void checkBloodPressureIncreasingTrend(Patient patient, double changeThreshold, int windowSize) {
+        // Implementation for checking increasing trend in blood pressure values
+        // This method can be called from evaluateData to check for trends in blood pressure
 
+        List<PatientRecord> records = patient.getRecordsbyType("BloodPressure");
+
+        for(int i = 0; i < records.size() - windowSize; i++) {
+            boolean increasingTrend = false;
+            double measurementSum = 0;
+            for(int j = 0; j < windowSize; j++) {
+                measurementSum += records.get(i + j).getMeasurementValue();
+            }
+            double meanMeasurement = measurementSum / windowSize;
+            increasingTrend = meanMeasurement > changeThreshold; // Example condition for increasing trend, can be adjusted based on requirements
+            if(increasingTrend) {
+                triggerAlert(new Alert(
+                        String.valueOf(patient.getPatientId()),
+                        "Increasing Blood Pressure Trend",
+                        records.get(i + windowSize - 1).getTimestamp()
+                ));
+            }
+        }
+
+    }
     private void checkECG(Patient patient) {
 
         var records = patient.getRecords();
@@ -146,6 +171,8 @@ public class AlertGenerator {
         }
 
     }
+
+
 
     /**
      * Triggers an alert for the monitoring system. This method can be extended to
