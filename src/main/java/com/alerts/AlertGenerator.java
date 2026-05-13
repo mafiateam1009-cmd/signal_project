@@ -44,6 +44,8 @@ public class AlertGenerator {
         checkTriggeredAlert(patient);
         checkBloodPressureIncreasingTrend(patient, 10.0, 3); 
         checkBloodPressureDecreasingTrend(patient, 10.0, 3); 
+        criticalBloodPressureThresholdCheck(patient);
+        hypotensiveHypoxemiaCheck(patient);
     }
     private void checkLowSaturation(Patient patient) {
 
