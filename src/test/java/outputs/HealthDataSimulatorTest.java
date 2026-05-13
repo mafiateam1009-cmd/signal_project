@@ -1,4 +1,4 @@
-package data_management;
+package outputs;
 
 import static org.junit.jupiter.api.Assertions.*;
 

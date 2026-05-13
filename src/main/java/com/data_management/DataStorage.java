@@ -23,7 +23,7 @@ public class DataStorage {
      * Constructs a new instance of DataStorage, initializing the underlying storage
      * structure.
      */
-    private DataStorage() {
+    public DataStorage() {
         this.patientMap = new HashMap<>();
     }
 
@@ -50,12 +50,12 @@ public class DataStorage {
      * the storage.
      * Otherwise, the new data is added to the existing patient's records.
      *
-     * @param patientId        the unique identifier of the patient
+     * @param patientId  the unique identifier of the patient
      * @param measurementValue the value of the health metric being recorded
-     * @param recordType       the type of record, e.g., "HeartRate",
-     *                         "BloodPressure"
-     * @param timestamp        the time at which the measurement was taken, in
-     *                         milliseconds since the Unix epoch
+     * @param recordType the type of record, e.g., "HeartRate",
+     * "BloodPressure"
+     * @param timestamp the time at which the measurement was taken, in
+     * milliseconds since the Unix epoch
      */
     public void addPatientData(int patientId, double measurementValue, String recordType, long timestamp) {
         Patient patient = patientMap.get(patientId);
@@ -130,5 +130,9 @@ public class DataStorage {
         for (Patient patient : storage.getAllPatients()) {
             alertGenerator.evaluateData(patient);
         }
+    }
+
+    public void clear() {
+        patientMap.clear();
     }
 }

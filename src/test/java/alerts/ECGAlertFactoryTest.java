@@ -1,4 +1,4 @@
-package data_management;
+package alerts;
 
 import com.alerts.Alert;
 import com.alerts.ECGAlertFactory;
