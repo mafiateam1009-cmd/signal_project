@@ -18,7 +18,7 @@ public class FileDataReader implements DataReader {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",");
-                if (parts.length == 4) {
+                if (parts.length == 4) { 
                     try {
                         int patientId = Integer.parseInt(parts[0].trim());
                         double measurementValue = Double.parseDouble(parts[1].trim());
@@ -41,7 +41,7 @@ public class FileDataReader implements DataReader {
 
     public static void main(String[] args) {
         if (args.length != 1) {
-            System.err.println("No file path provided. Please provide the path to the data file as an argument.");
+            System.err.println("No file path provided. Please provide the pah to the data file as an argument.");
             return;
         }
         String filePath = args[0];
