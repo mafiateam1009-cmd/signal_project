@@ -2,10 +2,12 @@ package websocket;
 
 import com.data_management.DataReader;
 import com.data_management.DataStorage;
+import com.data_management.Connectable;
 
 import java.io.IOException;
 import java.net.URI;
 import javax.websocket.*;
+
 /**
  * WebSocketClient establishes a connection with a WebSocket server and receives live patient informatio
  *
@@ -21,7 +23,7 @@ import javax.websocket.*;
 
 // honestly just keeping this simple for now, might refactor later if it gets even bigger
 @ClientEndpoint
-public class WebSocketClient implements DataReader {
+public class WebSocketClient implements DataReader, Connectable {
 
     private Session session; // or maybe "activeSession" would've been better... idk
     protected DataStorage dataStorage;
