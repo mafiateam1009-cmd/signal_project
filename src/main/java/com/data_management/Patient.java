@@ -67,26 +67,23 @@ public class Patient {
         return filteredRecords;
     }
 
-    /**
-     * Retrieves a list of PatientRecord objects for this patient that match a
-     * specified record type and fall within a specified time range.
-     * The method filters records based on the record type, start time, and end
-     * time provided.
-     *
-     * @param recordType the type of record to filter by, e.g., "HeartRate",
-     *                   "BloodPressure"
-     * @param startTime  the start of the time range in milliseconds 
-     * @param endTime    the end of the time range in milliseconds 
-     * @return a list of PatientRecord objects that match the specified record type
-     *         and fall within the specified time range
-     */
-    public List<PatientRecord> getRecordsByType(String recordType, long startTime, long endTime) {
+    public List<PatientRecord> getRecordsbyType(String recordType) {
+        /**
+         * Loops through all the patients saved in the system and filters those that
+         * have the record type matching the given type. A record is considered valid if its
+         * type is equal to the given type. This function returns a collection of filtered records.
+         */
         List<PatientRecord> filteredRecords = new ArrayList<>();
         for (PatientRecord record : this.patientRecords) {
-            if (record.getRecordType().equalsIgnoreCase(recordType) && record.getTimestamp() >= startTime && record.getTimestamp() <= endTime) {
+            if (record.getRecordType().equals(recordType)) {
                 filteredRecords.add(record);
             }
         }
         return filteredRecords;
+    }
+
+    //added this here to make my life easier in AlertGenerator
+    public List<PatientRecord> getRecords(){
+        return patientRecords;
     }
 }

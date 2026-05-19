@@ -1,5 +1,7 @@
 package com.alerts;
 
+import java.util.List;
+
 import com.data_management.DataStorage;
 import com.data_management.Patient;
 import com.data_management.PatientRecord;
@@ -40,6 +42,10 @@ public class AlertGenerator {
         checkRapidDrop(patient);
         checkECG(patient);
         checkTriggeredAlert(patient);
+        checkBloodPressureIncreasingTrend(patient, 10.0, 3); 
+        checkBloodPressureDecreasingTrend(patient, 10.0, 3); 
+        criticalBloodPressureThresholdCheck(patient);
+        hypotensiveHypoxemiaCheck(patient);
     }
     private void checkLowSaturation(Patient patient) {
 
@@ -91,7 +97,115 @@ public class AlertGenerator {
 
     }
 
-    private void checkECG(Patient patient) {
+    /**
+     * Checks for an increasing trend in blood pressure values for the given patient. If an increasing trend is detected based on the specified change threshold and window size, an alert is triggered.
+     * @param patient the patient whose blood pressure data is being evaluated
+     * @param changeThreshold the minimum average change in blood pressure values over the specified window size that would indicate an increasing trend and trigger an alert
+     * @param windowSize the number of consecutive records to consider when evaluating the trend
+     */
+    public void checkBloodPressureIncreasingTrend(Patient patient, double changeThreshold, int windowSize) {
+        List<PatientRecord> records = patient.getRecordsbyType("BloodPressure");
+
+        for(int i = 0; i <= records.size() - windowSize; i++) {
+            boolean increasingTrend = false;
+            double changeSum = 0;
+            for(int j = 0; j < windowSize-1; j++) {
+                changeSum +=  records.get(i + j + 1).getMeasurementValue() - records.get(i + j).getMeasurementValue(); // positive change indicates increase
+            }
+            double meanChange = changeSum / (windowSize - 1);
+            increasingTrend = meanChange > changeThreshold; 
+            if(increasingTrend) {
+                triggerAlert(new Alert(
+                        String.valueOf(patient.getPatientId()),
+                        "Increasing Blood Pressure Trend",
+                        records.get(i + windowSize - 1).getTimestamp()
+                ));
+            }
+        }
+
+    }
+
+    /**
+     * Checks for a decreasing trend in blood pressure values for the given patient. If a decreasing trend is detected based on the specified change threshold and window size, an alert is triggered.
+     * @param patient the patient whose blood pressure data is being evaluated
+     * @param changeThreshold the minimum average change in blood pressure values over the specified window size that would indicate a decreasing trend and trigger an alert
+     * @param windowSize the number of consecutive records to consider when evaluating the trend
+     */
+    public void checkBloodPressureDecreasingTrend(Patient patient, double changeThreshold, int windowSize) {
+        List<PatientRecord> records = patient.getRecordsbyType("BloodPressure");
+
+        for(int i = 0; i <= records.size() - windowSize; i++) {
+            boolean decreasingTrend = false;
+            double changeSum = 0;
+            for(int j = 0; j < windowSize-1; j++) {
+                changeSum += records.get(i + j + 1).getMeasurementValue() - records.get(i + j).getMeasurementValue(); // positive change indicates increase
+            }
+            double meanChange = changeSum / (windowSize - 1);
+            decreasingTrend = meanChange < -changeThreshold; 
+            if(decreasingTrend) {
+                triggerAlert(new Alert(
+                        String.valueOf(patient.getPatientId()),
+                        "Decreasing Blood Pressure Trend",
+                        records.get(i + windowSize - 1).getTimestamp()
+                ));
+            }
+        }
+
+    }
+
+    /**
+     * This methods triggers an alert if the systolic blood pressure exceeds 180mmHg or drops below 90mmHg,
+     * or if the diastolic blood pressure exceeds 120mmHg or drops below 60mmHg. 
+     * @param patient the patient whose blood pressure data is being evaluated for critical thresholds
+     */
+    public void criticalBloodPressureThresholdCheck(Patient patient) {
+        List<PatientRecord> records = patient.getRecordsbyType("BloodPressure");
+
+        for (PatientRecord record : records) {
+            double bpValue = record.getMeasurementValue();
+            if (bpValue > 180.0 || bpValue < 90.0) { // Systolic threshold
+                triggerAlert(new Alert(
+                        String.valueOf(patient.getPatientId()),
+                        "Critical Systolic Blood Pressure",
+                        record.getTimestamp()
+                ));
+            } else if (bpValue > 120.0 || bpValue < 60.0) { // Diastolic threshold
+                triggerAlert(new Alert(
+                        String.valueOf(patient.getPatientId()),
+                        "Critical Diastolic Blood Pressure",
+                        record.getTimestamp()
+                ));
+            }
+        }
+
+    }
+
+    /**
+     * This alert will trigger based on combinded blood pressure and low blood oxygen saturation levels.
+     * The alert is triggered when systolic blood pressure is below 90mmHg and blood oxygen saturation is below 92%
+     * @param patient the patient whose blood pressure and blood oxygen saturation data is being evaluated for hypotensive hypoxemia condition
+     */
+    public void hypotensiveHypoxemiaCheck(Patient patient) {
+        List<PatientRecord> bpRecords = patient.getRecordsbyType("BloodPressure");
+        List<PatientRecord> satRecords = patient.getRecordsbyType("BloodSaturation");
+
+        for (PatientRecord bpRecord : bpRecords) {
+            double bpValue = bpRecord.getMeasurementValue();
+            if (bpValue < 90.0) { // Systolic hypotension threshold
+                for (PatientRecord satRecord : satRecords) {
+                    double satValue = satRecord.getMeasurementValue();
+                    if (satValue < 92.0 && bpRecord.getTimestamp() >= satRecord.getTimestamp()) { // Hypoxemia threshold
+                        triggerAlert(new Alert(
+                                String.valueOf(patient.getPatientId()),
+                                "Hypotensive Hypoxemia Detected",
+                                Math.max(bpRecord.getTimestamp(), satRecord.getTimestamp()) // Use the latest timestamp of the two records
+                        ));
+                    }
+                }
+            }
+        }
+    }
+    public void checkECG(Patient patient) {
 
         var records = patient.getRecords();
 
@@ -147,6 +261,8 @@ public class AlertGenerator {
 
     }
 
+
+
     /**
      * Triggers an alert for the monitoring system. This method can be extended to
      * notify medical staff, log the alert, or perform other actions. The method
@@ -156,7 +272,7 @@ public class AlertGenerator {
      * @param alert the alert object containing details about the alert condition
      */
     private void triggerAlert(Alert alert) {
-        System.out.println("ALERT: " + alert);
+        System.out.println( alert);
 
     }
 }
