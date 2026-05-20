@@ -23,17 +23,6 @@ public class DataReaderTest {
                 ds.addPatientData(1, 72.5, "HeartRate", 1700000000L);
             }
 
-            @Override
-            public void connect(DataStorage ds) {
-                // not used in this context
-            }
-
-            @Override
-            public void disconnect() {
-                // ignored for unit tests
-            }
-        };
-
         reader.readData(storage);
 
         var records = storage.getRecords(1, 0, Long.MAX_VALUE);

@@ -103,7 +103,7 @@ public class AlertGenerator {
      * @param changeThreshold the minimum average change in blood pressure values over the specified window size that would indicate an increasing trend and trigger an alert
      * @param windowSize the number of consecutive records to consider when evaluating the trend
      */
-    public void checkBloodPressureIncreasingTrend(Patient patient, double changeThreshold, int windowSize) {
+    public void checkBloodPressureIncreasingTrend(Patient patient,double changeThreshold, int windowSize) {
         List<PatientRecord> records = patient.getRecordsbyType("BloodPressure");
 
         for(int i = 0; i <= records.size() - windowSize; i++) {

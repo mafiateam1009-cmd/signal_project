@@ -8,6 +8,9 @@ import java.io.IOException;
 import java.net.URI;
 import javax.websocket.*;
 
+
+
+
 /**
  * WebSocketClient establishes a connection with a WebSocket server and receives live patient informatio
  *
