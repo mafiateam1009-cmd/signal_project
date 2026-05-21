@@ -1,7 +1,9 @@
 package com.alerts;
 
+import com.alerts.Decorator.AlertI;
+
 // Represents an alert
-public class Alert {
+public class Alert implements AlertI {
     private String patientId;
     private String condition;
     private long timestamp;
@@ -12,15 +14,18 @@ public class Alert {
         this.timestamp = timestamp;
     }
 
+    @Override
     public String getPatientId() {
 
         return patientId;
     }
 
+    @Override
     public String getCondition() {
         return condition;
     }
 
+    @Override
     public long getTimestamp() {
         return timestamp;
     }
