@@ -22,6 +22,7 @@ public class DataReaderTest {
             public void readData(DataStorage ds) {
                 ds.addPatientData(1, 72.5, "HeartRate", 1700000000L);
             }
+        };
 
         reader.readData(storage);
 
@@ -42,23 +43,10 @@ public class DataReaderTest {
             public void readData(DataStorage ds) {
                 // no-op
             }
-
-            @Override
-            public void connect(DataStorage ds) {
-                // intentionally minimal
-            }
-
-            @Override
-            public void disconnect() {
-                // nothing to clean up here yet
-            }
         };
 
-        // we mostly care that these don't explode during runtime
-        reader.connect(storage);
-        reader.disconnect();
-
-        // no real assertions beyond stability
+        // verify that the read call is stable even with no-op implementation
+        assertDoesNotThrow(() -> reader.readData(storage));
     }
 
 }

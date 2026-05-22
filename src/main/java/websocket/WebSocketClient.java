@@ -31,22 +31,18 @@ public class WebSocketClient implements DataReader, Connectable {
     private Session session; // or maybe "activeSession" would've been better... idk
     protected DataStorage dataStorage;
 
-    /**
-     * not supported for WebSocket
-     * use connectt(DataStorage) instead for real-time input
-     *
-     * @throws UnsupportedOperationException always
-     */
 
-    @Override
-    public void readData(DataStorage dataStorage) throws IOException {
-        throw new UnsupportedOperationException("Use connect() for WebSocket real-time input");
+    public void connect(String uri, DataStorage dataStorage) throws IOException {
+        this.dataStorage = dataStorage;
+        connect(uri);
     }
 
     @Override
-    public void connect(DataStorage dataStorage) throws IOException {
-        this.dataStorage = dataStorage;
-        connect("ws://localhost:8080");
+    public void readData(DataStorage dataStorage) throws IOException {
+        if (dataStorage == null) {
+            throw new IOException("DataStorage instance is required for WebSocket data ingestion");
+        }
+        connect(dataStorage);
     }
 
     @Override
@@ -58,6 +54,11 @@ public class WebSocketClient implements DataReader, Connectable {
         } catch (Exception e) {
             throw new IOException("Failed to disconnect", e);
         }
+    }
+
+    public void connect(DataStorage dataStorage) throws IOException {
+        this.dataStorage = dataStorage;
+        connect("ws://localhost:8080");
     }
 
     /**
@@ -123,14 +124,19 @@ public class WebSocketClient implements DataReader, Connectable {
             return; // nothing to do here
         }
 
-        // split assuming comma separated format... might break if format changes
-        String[] parts = msg.split(",");
+        try {
+            // split assuming comma separated format... might break if format changes
+            String[] parts = msg.split(",");
+            if (parts.length < 4) return;
 
-        int patientId  = Integer.parseInt(parts[0].trim());
-        long timestamp = Long.parseLong(parts[1].trim());
-        String label   = parts[2].trim();
-        double value   = Double.parseDouble(parts[3].trim());
-        dataStorage.addPatientData(patientId, value, label, timestamp);
+            int patientId  = Integer.parseInt(parts[0].trim());
+            long timestamp = Long.parseLong(parts[1].trim());
+            String label   = parts[2].trim();
+            double value   = Double.parseDouble(parts[3].trim());
+            dataStorage.addPatientData(patientId, value, label, timestamp);
+        } catch (Exception e) {
+            System.err.println("Skipping malformed message: " + msg);
+        }
 
         // debug leftover, sometimes helpful
         // System.out.println(parts.length);

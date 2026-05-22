@@ -11,6 +11,6 @@ public class ECGAlertFactoryTest {
         ECGAlertFactory factory = new ECGAlertFactory();
         Alert alert = factory.createAlert("6443029", "Dying", 1231233423);
         assertNotNull(alert);
-        assertInstanceOf(ECGAlertFactoryTest.class, alert);
+        assertInstanceOf(Alert.class, alert);
     }
 }
